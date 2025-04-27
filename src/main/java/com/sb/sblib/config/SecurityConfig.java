@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.sb.sblib.security.CustomLoginSuccessHandler;
 import com.sb.sblib.security.CustomUserDetailsService;
 
 import lombok.RequiredArgsConstructor;
@@ -20,17 +21,10 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
 	private final CustomUserDetailsService customUserDetailsService;
-	// private final CustomLoginSuccessHandler customLoginSuccessHandler;
+	private final CustomLoginSuccessHandler customLoginSuccessHandler;
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-		// セキュリティ設定を行う
-		http.userDetailsService(customUserDetailsService) // ログイン時の処理をカスタマイズする
-		.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/**") // どんなURLパターンでも全部
-				.permitAll() // 全てアクセスを許可する
-		);
 
 		// // セキュリティ設定を行う
 		// http.userDetailsService(customUserDetailsService) // ログイン時の処理をカスタマイズする
@@ -48,6 +42,16 @@ public class SecurityConfig {
 		// 		.permitAll() // 全てアクセスを許可する
 		// 		.anyRequest().authenticated() // それ以外の全てのリクエストは認証が必要
 		// );
+
+		// APIによるバリデーションを試す場合は、次の通り認証やCSRFの無効化が必要となる
+		// セキュリティ設定を行う
+		http.userDetailsService(customUserDetailsService) // ログイン時の処理をカスタマイズする
+		.authorizeHttpRequests(auth -> auth
+				.requestMatchers("/**") // どんなURLパターンでも全部
+				.permitAll() // 全てアクセスを許可する
+		)
+		.csrf(csrf -> csrf.disable()) // CSRFを無効化する;
+		;
 
 		// セキュリティ設定をビルドし、呼び出し側に返却する
 		return http.build();

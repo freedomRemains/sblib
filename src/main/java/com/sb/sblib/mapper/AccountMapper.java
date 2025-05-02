@@ -12,9 +12,9 @@ public interface AccountMapper {
 
 	@Select("""
 			SELECT
-			  TACCOUNT_ID, MAIL_ADDRESS, PASSWORD, IS_DELETED,
+			  ACCOUNT_ID, MAIL_ADDRESS, PASSWORD, IS_DELETED,
 			  CREATED_BY, CREATED_AT, UPDATED_BY, UPDATED_AT
-			FROM TACCOUNT
+			FROM ACCOUNT
 			""")
 	List<Account> findAll();
 }

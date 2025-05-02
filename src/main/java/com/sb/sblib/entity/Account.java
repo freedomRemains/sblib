@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class Account {
 
-	private Integer taccountId;
+	private Integer accountId;
 	private String mailAddress;
 	private String password;
 	private String isDeleted;

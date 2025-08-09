@@ -13,13 +13,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
-	@Override
-	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-			Authentication authentication) throws IOException, ServletException {
+    @Override
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+            Authentication authentication) throws IOException, ServletException {
 
-		// TODO ログイン成功時にセッション情報を設定する、といった処理を行う場合はここに記述する。
+        // TODO ログイン成功時にセッション情報を設定する、といった処理を行う場合はここに記述する。
 
-		// ログイン後画面に遷移する(F5キーによるフォーム再送を防ぐため、リダイレクトで POST -> GET にリクエストを振り替える)
-		response.sendRedirect("/top");
-	}
+        // ログイン後画面に遷移する(F5キーによるフォーム再送を防ぐため、リダイレクトで POST -> GET にリクエストを振り替える)
+        response.sendRedirect("/top");
+    }
 }

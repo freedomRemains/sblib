@@ -18,60 +18,60 @@ import com.sb.sblib.mapper.AccountMapper;
 @ExtendWith(MockitoExtension.class)
 public class AccountServiceTest {
 
-	@Mock
-	private AccountMapper accountMapper;
+    @Mock
+    private AccountMapper accountMapper;
 
-	@InjectMocks
-	private AccountService accountService;
+    @InjectMocks
+    private AccountService accountService;
 
-	@Test
-	void test01() {
+    @Test
+    void test01() {
 
-		// 正常系
+        // 正常系
 
-		// accountMapperのfindAllメソッドの返却値を設定する
-		List<Account> accountList = new ArrayList<Account>();
-		Account account = new Account();
-		account.setMailAddress("guest@sblib.com");
-		account.setPassword("pass");
-		accountList.add(account);
-		when(accountMapper.findAll()).thenReturn(accountList);
+        // accountMapperのfindAllメソッドの返却値を設定する
+        List<Account> accountList = new ArrayList<Account>();
+        Account account = new Account();
+        account.setMailAddress("guest@sblib.com");
+        account.setPassword("pass");
+        accountList.add(account);
+        when(accountMapper.findAll()).thenReturn(accountList);
 
-		// テスト対象のメソッドを実行する
-		assertTrue(accountService.auth("guest@sblib.com", "pass"));
-	}
+        // テスト対象のメソッドを実行する
+        assertTrue(accountService.auth("guest@sblib.com", "pass"));
+    }
 
-	@Test
-	void test02() {
+    @Test
+    void test02() {
 
-		// カバレッジ(認証失敗パターン)
+        // カバレッジ(認証失敗パターン)
 
-		// accountMapperのfindAllメソッドの返却値を設定する
-		List<Account> accountList = new ArrayList<Account>();
-		Account account = new Account();
-		account.setMailAddress("guest@sblib.com");
-		account.setPassword("pass");
-		accountList.add(account);
-		when(accountMapper.findAll()).thenReturn(accountList);
+        // accountMapperのfindAllメソッドの返却値を設定する
+        List<Account> accountList = new ArrayList<Account>();
+        Account account = new Account();
+        account.setMailAddress("guest@sblib.com");
+        account.setPassword("pass");
+        accountList.add(account);
+        when(accountMapper.findAll()).thenReturn(accountList);
 
-		// テスト対象のメソッドを実行する
-		assertFalse(accountService.auth("master@sblib.com", "pass"));
-	}
+        // テスト対象のメソッドを実行する
+        assertFalse(accountService.auth("master@sblib.com", "pass"));
+    }
 
-	@Test
-	void test03() {
+    @Test
+    void test03() {
 
-		// カバレッジ(メールアドレスは合致するが、パスワードが合致しないパターン)
+        // カバレッジ(メールアドレスは合致するが、パスワードが合致しないパターン)
 
-		// accountMapperのfindAllメソッドの返却値を設定する
-		List<Account> accountList = new ArrayList<Account>();
-		Account account = new Account();
-		account.setMailAddress("guest@sblib.com");
-		account.setPassword("pass");
-		accountList.add(account);
-		when(accountMapper.findAll()).thenReturn(accountList);
+        // accountMapperのfindAllメソッドの返却値を設定する
+        List<Account> accountList = new ArrayList<Account>();
+        Account account = new Account();
+        account.setMailAddress("guest@sblib.com");
+        account.setPassword("pass");
+        accountList.add(account);
+        when(accountMapper.findAll()).thenReturn(accountList);
 
-		// テスト対象のメソッドを実行する
-		assertFalse(accountService.auth("guest@sblib.com", "ngpass"));
-	}
+        // テスト対象のメソッドを実行する
+        assertFalse(accountService.auth("guest@sblib.com", "ngpass"));
+    }
 }

@@ -13,13 +13,13 @@ import lombok.Data;
 @Schema(description = "共通レスポンスDTO")
 public class CommonResponseDto {
 
-	@Schema(description = "処理結果", type = "integer", example = "0")
-	private Integer result;
+    @Schema(description = "処理結果", type = "integer", example = "0")
+    private Integer result;
 
-	@Schema(description = "エラーリスト", type = "list")
-	private List<ErrorDto> errList;
+    @Schema(description = "エラーリスト", type = "list")
+    private List<ErrorDto> errList;
 
-	public CommonResponseDto() {
-		errList = new ArrayList<ErrorDto>();
-	}
+    public CommonResponseDto() {
+        errList = new ArrayList<ErrorDto>();
+    }
 }

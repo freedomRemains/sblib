@@ -10,12 +10,12 @@ import lombok.Data;
 @Data
 public class Account {
 
-	private Integer accountId;
-	private String mailAddress;
-	private String password;
-	private String isDeleted;
-	private String createdBy;
-	private DateTime createdAt;
-	private String updatedBy;
-	private DateTime updatedAt;
+    private Integer accountId;
+    private String mailAddress;
+    private String password;
+    private String isDeleted;
+    private String createdBy;
+    private DateTime createdAt;
+    private String updatedBy;
+    private DateTime updatedAt;
 }

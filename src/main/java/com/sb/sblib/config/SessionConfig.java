@@ -12,21 +12,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Configuration
 public class SessionConfig implements BeanClassLoaderAware {
 
-	private ClassLoader loader;
+    private ClassLoader loader;
 
-	@Bean
-	RedisSerializer<Object> springSessionDefaultRedisSerializer() {
-		return new GenericJackson2JsonRedisSerializer(objectMapper());
-	}
+    @Bean
+    RedisSerializer<Object> springSessionDefaultRedisSerializer() {
+        return new GenericJackson2JsonRedisSerializer(objectMapper());
+    }
 
-	private ObjectMapper objectMapper() {
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModules(SecurityJackson2Modules.getModules(this.loader));
-		return mapper;
-	}
+    private ObjectMapper objectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModules(SecurityJackson2Modules.getModules(this.loader));
+        return mapper;
+    }
 
-	@Override
-	public void setBeanClassLoader(ClassLoader classLoader) {
-		this.loader = classLoader;
-	}
+    @Override
+    public void setBeanClassLoader(ClassLoader classLoader) {
+        this.loader = classLoader;
+    }
 }

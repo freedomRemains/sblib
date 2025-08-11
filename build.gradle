@@ -93,6 +93,9 @@ dependencies {
 	// JUnitを使用するための設定
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+	// Mockitoを使用するための設定
+	testImplementation 'org.mockito:mockito-core:5.14.2'
+
 	// SpringSecurityを使用するための設定
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'

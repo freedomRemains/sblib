@@ -70,18 +70,6 @@ public class AwsS3Util {
         s3Client.putObject(request, localFile.toPath());
     }
 
-    // 2. ファイルダウンロード
-    public void downloadFile(String bucket, String key, File destFile) throws IOException {
-        GetObjectRequest request = GetObjectRequest.builder()
-                .bucket(bucket)
-                .key(key)
-                .build();
-        try (ResponseInputStream<GetObjectResponse> s3Obj = s3Client.getObject(request);
-                FileOutputStream fos = new FileOutputStream(destFile)) {
-            s3Obj.transferTo(fos);
-        }
-    }
-
     /**
      * S3からファイルをダウンロードする。
      * 

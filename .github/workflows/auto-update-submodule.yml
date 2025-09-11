@@ -1,0 +1,94 @@
+# 変数定義(&付きで宣言し、参照するときは*で参照できる)
+child_project: &child_project sblib
+# 参照するには *child_project と記述する
+
+# TODO 文字列はダブルクオートがいるか、AIに聞いてみる。(ネット調査では判然としない)
+
+# 親プロジェクト更新のためのGitサブモジュール(子プロジェクト側)の設定(nameは表題やコメントのようなもので、必須ではない)
+name: Update Parent Submodule
+
+# 次のタイミングで起動する
+on:
+
+  # Gitサブモジュール(子プロジェクト)側のdevelopブランチへのpush時
+  push:
+    branches:
+      - develop
+
+# ジョブ(ワークフロー内で実行する作業のまとまり)の定義
+jobs:
+
+  # 親プロジェクト更新設定(update-parentはjobs配下のジョブ名に該当する、任意の文字列としてよい)
+  update-parent:
+
+    # 当該ジョブの実行環境はUbuntuの最新イメージ上とする
+    runs-on: ubuntu-latest
+
+    # ジョブ内ステップの定義
+    steps:
+
+      # ソースコードを取得する(nameはステップ名)
+      - name: Checkout child repo
+
+        # GitHubActionsが用意しているcheckoutの仕組みで資材を取得する
+        uses: actions/checkout@v4
+
+# TODO GitHubの登録ユーザ(freedomRemains?)、メールアドレス、GitBash設定を見て確認する
+      # gh(GitHub CLI)を使用し、Gitのコンフィグ設定を行う(これはcommi&push、プルリク作成できるユーザを指定する)
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+     # Gitサブモジュール(子プロジェクト)をクローンし、更新があれば親プロジェクトにプルリクを発行する
+      - name: Clone parent repo and update submodule
+
+        # 親プロジェクトのトークンをGitHubActionsのsecretから取得する
+        env:
+
+          # 「secrets」はGitHubリポジトリの「Settings」→「Secrets and variables」→「Actions」から設定できる
+          # トークン発行は、次のサイトから可能。
+          #   https://github.com/settings/tokens
+          #   (1)　トークンの種類は「Fine-grained token」を選択する。
+          #   (2)　トークンの設定項目は、次の通りとする。
+          #     A.　名前は任意に付与する。(gh-actions-submodule-sync、など)
+          #     B.　有効期限(90日～1年)
+          #     C.　対象リポジトリは、親リポジトリを選択する
+          #     D.　権限設定は「Contents: Read and write」「Pull requests: Read and write」を追加。
+          # トークン発行後は子プロジェクト側のsecretsに登録する。
+          #    (1)　「Settings」→「Secrets and variables」→「Actions」を選択。
+          #    (2)　「New repository secret」を選択。
+          #    (3)　次のように入力する。
+          #      Name : PARENT_REPO_TOKEN
+          #      Value : 発行済みの親プロジェクトのトークン
+          GH_TOKEN: ${{ secrets.PARENT_REPO_TOKEN }}
+
+        # gh(GitHub CLI)コマンドを実行する
+        run: |
+
+# TODO URLを変更する
+          # GitHubリポジトリから資材をクローンする
+          git clone https://github.com/your-org/parent-repo.git
+
+# TODO ディレクトリ名を変更する(sblib)
+          # クローンした資材のディレクトリに移動する
+          cd parent-repo
+
+# TODO 「child」の部分を変更する(sblibだと思う、コマンド調べる)
+          # Gitサブモジュール(リモート側、子プロジェクト)のアップデートを行う
+          git submodule update --remote child
+
+# TODO 「child」の部分を変更する(sblibだと思う、コマンド調べる)
+          # 更新資材をステージングにアップする
+          git add child
+
+          # ステージされた更新資材をコミットする
+          git commit -m "Auto-update child submodule"
+
+# TODO 「auto-update-child」の部分を変更する(これはブランチ名らしい、任意の名前にする、そのままでもよい)
+          # 子プロジェクト更新をpushする
+          git push origin HEAD:auto-update-child
+
+# TODO 「main」の部分を変更する。(developだと思う、コマンド調べる)
+          # 子プロジェクト(Gitサブモジュール)更新のプルリクを作成する
+          gh pr create --title "Update child submodule" --body "Automated update from child repo" --base main

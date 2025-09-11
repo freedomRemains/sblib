@@ -111,6 +111,17 @@ dependencies {
 	// AWS S3(AWS SDK)を使用するための設定
 	implementation 'software.amazon.awssdk:s3:2.25.33'
 	implementation 'software.amazon.awssdk:auth:2.25.33'
+
+	// SFTPを使用するための設定
+	implementation 'com.hierynomus:sshj:0.38.0'
+}
+
+// 共通ライブラリは起動可能jar(bootJar)とする必要がないのでjar生成の設定に変更する
+bootJar {
+	enabled = false
+}
+jar {
+	enabled = true
 }
 
 // テストタスクの設定

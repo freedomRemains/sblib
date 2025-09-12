@@ -10,7 +10,9 @@ import org.springframework.test.context.jdbc.Sql;
 /**
  * Mapperのテストは所定のDB初期化SQLを実行し、実物のクエリが意図した通りに動くことを確認する。
  */
-@SpringBootTest
+@SpringBootTest(classes = {
+    com.sb.sblib.config.TestSpringBootApplication.class
+})
 @Sql({ "classpath:dbinit/schema.sql", "classpath:dbinit/data.sql" })
 public class AccountMapperTest {
 

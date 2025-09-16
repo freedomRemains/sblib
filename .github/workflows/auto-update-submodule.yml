@@ -76,6 +76,9 @@ jobs:
         # gh(GitHub CLI)コマンドを実行する
         run: |
 
+          # トークンを指定したURL
+          git remote set-url origin https://x-access-token:${{ secrets.PARENT_REPO_TOKEN }}@github.com/ORG_NAME/PARENT_REPO.git
+
           # GitHubリポジトリから資材をクローンする
           git clone https://github.com/${{ env.GIT_NAME }}/${{ env.PARENT_PROJECT }}
 

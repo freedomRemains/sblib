@@ -18,6 +18,27 @@ on:
     branches:
       - develop
 
+# 親プロジェクトに対してプルリクを出すためのパーミッション設定を記述する
+# 事前にトークン発行しておき、そのときに権限設定を行う必要がある。
+# 「secrets」はGitHubリポジトリの「Settings」→「Secrets and variables」→「Actions」から設定できる
+# トークン発行は、次のサイトから可能。
+#   https://github.com/settings/tokens
+#   (1)　トークンの種類は「Fine-grained token」を選択する。
+#   (2)　トークンの設定項目は、次の通りとする。
+#     A.　名前は任意に付与する。(gh-actions-submodule-sync、など)
+#     B.　有効期限(90日～1年)
+#     C.　対象リポジトリは、親リポジトリを選択する
+#     D.　権限設定は「Contents: Read and write」「Pull requests: Read and write」を追加。
+# トークン発行後は子プロジェクト側のsecretsに登録する。
+#    (1)　「Settings」→「Secrets and variables」→「Actions」を選択。
+#    (2)　「New repository secret」を選択。
+#    (3)　次のように入力する。
+#      Name : PARENT_REPO_TOKEN
+#      Value : 発行済みの親プロジェクトのトークン
+permissions:
+  contents: write
+  pull-requests: write
+
 # ジョブ(ワークフロー内で実行する作業のまとまり)の定義
 jobs:
 
@@ -35,22 +56,6 @@ jobs:
 
         # 親プロジェクトのトークンをGitHubActionsのsecretから取得する
         env:
-
-          # 「secrets」はGitHubリポジトリの「Settings」→「Secrets and variables」→「Actions」から設定できる
-          # トークン発行は、次のサイトから可能。
-          #   https://github.com/settings/tokens
-          #   (1)　トークンの種類は「Fine-grained token」を選択する。
-          #   (2)　トークンの設定項目は、次の通りとする。
-          #     A.　名前は任意に付与する。(gh-actions-submodule-sync、など)
-          #     B.　有効期限(90日～1年)
-          #     C.　対象リポジトリは、親リポジトリを選択する
-          #     D.　権限設定は「Contents: Read and write」「Pull requests: Read and write」を追加。
-          # トークン発行後は子プロジェクト側のsecretsに登録する。
-          #    (1)　「Settings」→「Secrets and variables」→「Actions」を選択。
-          #    (2)　「New repository secret」を選択。
-          #    (3)　次のように入力する。
-          #      Name : PARENT_REPO_TOKEN
-          #      Value : 発行済みの親プロジェクトのトークン
           GH_TOKEN: ${{ secrets.PARENT_REPO_TOKEN }}
 
         # GitHubActionsが用意しているcheckoutの仕組みで資材を取得する

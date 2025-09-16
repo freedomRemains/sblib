@@ -54,6 +54,10 @@ jobs:
       # ソースコードを取得する(nameはステップ名)
       - name: Checkout child repo
 
+        # 親プロジェクトのトークンをGitHubActionsのsecretから取得する
+        env:
+          GH_TOKEN: ${{ secrets.PARENT_REPO_TOKEN }}
+
         # GitHubActionsが用意しているcheckoutの仕組みで資材を取得する
         uses: actions/checkout@v4
         with:

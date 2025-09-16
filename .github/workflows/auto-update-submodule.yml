@@ -54,10 +54,6 @@ jobs:
       # ソースコードを取得する(nameはステップ名)
       - name: Checkout child repo
 
-        # 親プロジェクトのトークンをGitHubActionsのsecretから取得する
-        env:
-          GH_TOKEN: ${{ secrets.PARENT_REPO_TOKEN }}
-
         # GitHubActionsが用意しているcheckoutの仕組みで資材を取得する
         uses: actions/checkout@v4
         with:
@@ -73,11 +69,12 @@ jobs:
      # Gitサブモジュール(子プロジェクト)をクローンし、更新があれば親プロジェクトにプルリクを発行する
       - name: Clone parent repo and update submodule
 
+        # 親プロジェクトのトークンをGitHubActionsのsecretから取得する
+        env:
+          GH_TOKEN: ${{ secrets.PARENT_REPO_TOKEN }}
+
         # gh(GitHub CLI)コマンドを実行する
         run: |
-
-          # トークンを指定したURLに切り替え、pushができるようにする
-          git remote set-url origin https://x-access-token:${{ secrets.PARENT_REPO_TOKEN }}@github.com/${{ env.GIT_NAME }}/${{ env.PARENT_PROJECT }}.git
 
           # GitHubリポジトリから資材をクローンする
           git clone https://x-access-token:${{ secrets.PARENT_REPO_TOKEN }}@github.com/${{ env.GIT_NAME }}/${{ env.PARENT_PROJECT }}.git

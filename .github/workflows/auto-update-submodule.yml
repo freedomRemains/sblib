@@ -1,11 +1,14 @@
-# 変数定義(&付きで宣言し、参照するときは*で参照できる)
-child_project: &child_project sblib
-# 参照するには *child_project と記述する
-
-# TODO 文字列はダブルクオートがいるか、AIに聞いてみる。(ネット調査では判然としない)
-
 # 親プロジェクト更新のためのGitサブモジュール(子プロジェクト側)の設定(nameは表題やコメントのようなもので、必須ではない)
 name: Update Parent Submodule
+
+# 環境設定
+env:
+
+  # プロジェクト名
+  GIT_NAME: "freedomRemains"
+  GIT_MAIL: "freedom17202103@gmail.com"
+  PARENT_PROJECT: "sbwap"
+  CHILD_PROJECT: "sblib"
 
 # 次のタイミングで起動する
 on:
@@ -33,12 +36,11 @@ jobs:
         # GitHubActionsが用意しているcheckoutの仕組みで資材を取得する
         uses: actions/checkout@v4
 
-# TODO GitHubの登録ユーザ(freedomRemains?)、メールアドレス、GitBash設定を見て確認する
       # gh(GitHub CLI)を使用し、Gitのコンフィグ設定を行う(これはcommi&push、プルリク作成できるユーザを指定する)
       - name: Configure Git
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
+          git config --global user.name ${{ env.GIT_NAME }}
+          git config --global user.email ${{ env.GIT_MAIL }}
 
      # Gitサブモジュール(子プロジェクト)をクローンし、更新があれば親プロジェクトにプルリクを発行する
       - name: Clone parent repo and update submodule
@@ -66,29 +68,23 @@ jobs:
         # gh(GitHub CLI)コマンドを実行する
         run: |
 
-# TODO URLを変更する
           # GitHubリポジトリから資材をクローンする
-          git clone https://github.com/your-org/parent-repo.git
+          git clone https://github.com/${{ env.GIT_NAME }}/${{ env.PARENT_PROJECT }}
 
-# TODO ディレクトリ名を変更する(sblib)
           # クローンした資材のディレクトリに移動する
-          cd parent-repo
+          cd ${{ env.PARENT_PROJECT }}
 
-# TODO 「child」の部分を変更する(sblibだと思う、コマンド調べる)
           # Gitサブモジュール(リモート側、子プロジェクト)のアップデートを行う
-          git submodule update --remote child
+          git submodule update --remote ${{ env.CHILD_PROJECT }}
 
-# TODO 「child」の部分を変更する(sblibだと思う、コマンド調べる)
           # 更新資材をステージングにアップする
-          git add child
+          git add ${{ env.CHILD_PROJECT }}
 
           # ステージされた更新資材をコミットする
           git commit -m "Auto-update child submodule"
 
-# TODO 「auto-update-child」の部分を変更する(これはブランチ名らしい、任意の名前にする、そのままでもよい)
           # 子プロジェクト更新をpushする
           git push origin HEAD:auto-update-child
 
-# TODO 「main」の部分を変更する。(developだと思う、コマンド調べる)
           # 子プロジェクト(Gitサブモジュール)更新のプルリクを作成する
-          gh pr create --title "Update child submodule" --body "Automated update from child repo" --base main
+          gh pr create --title "Update child submodule" --body "Automated update from child repo" --base develop

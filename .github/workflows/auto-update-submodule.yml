@@ -33,18 +33,6 @@ jobs:
       # ソースコードを取得する(nameはステップ名)
       - name: Checkout child repo
 
-        # GitHubActionsが用意しているcheckoutの仕組みで資材を取得する
-        uses: actions/checkout@v4
-
-      # gh(GitHub CLI)を使用し、Gitのコンフィグ設定を行う(これはcommi&push、プルリク作成できるユーザを指定する)
-      - name: Configure Git
-        run: |
-          git config --global user.name ${{ env.GIT_NAME }}
-          git config --global user.email ${{ env.GIT_MAIL }}
-
-     # Gitサブモジュール(子プロジェクト)をクローンし、更新があれば親プロジェクトにプルリクを発行する
-      - name: Clone parent repo and update submodule
-
         # 親プロジェクトのトークンをGitHubActionsのsecretから取得する
         env:
 
@@ -64,6 +52,21 @@ jobs:
           #      Name : PARENT_REPO_TOKEN
           #      Value : 発行済みの親プロジェクトのトークン
           GH_TOKEN: ${{ secrets.PARENT_REPO_TOKEN }}
+
+        # GitHubActionsが用意しているcheckoutの仕組みで資材を取得する
+        uses: actions/checkout@v4
+        with:
+          token: ${{ GH_TOKEN }}
+          submodules: true
+
+      # gh(GitHub CLI)を使用し、Gitのコンフィグ設定を行う(これはcommi&push、プルリク作成できるユーザを指定する)
+      - name: Configure Git
+        run: |
+          git config --global user.name ${{ env.GIT_NAME }}
+          git config --global user.email ${{ env.GIT_MAIL }}
+
+     # Gitサブモジュール(子プロジェクト)をクローンし、更新があれば親プロジェクトにプルリクを発行する
+      - name: Clone parent repo and update submodule
 
         # gh(GitHub CLI)コマンドを実行する
         run: |

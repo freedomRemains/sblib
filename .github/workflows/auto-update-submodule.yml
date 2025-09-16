@@ -69,7 +69,7 @@ jobs:
      # Gitサブモジュール(子プロジェクト)をクローンし、更新があれば親プロジェクトにプルリクを発行する
       - name: Clone parent repo and update submodule
 
-        # 親プロジェクトのトークンをGitHubActionsのsecretから取得する
+        # 親プロジェクトのトークンをGitHubActionsのsecretから取得する(「GH_TOKEN」はプルリク作成時にghコマンドで利用される変数)
         env:
           GH_TOKEN: ${{ secrets.PARENT_REPO_TOKEN }}
 

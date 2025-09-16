@@ -54,10 +54,6 @@ jobs:
       # ソースコードを取得する(nameはステップ名)
       - name: Checkout child repo
 
-        # 親プロジェクトのトークンをGitHubActionsのsecretから取得する
-        env:
-          GH_TOKEN: ${{ secrets.PARENT_REPO_TOKEN }}
-
         # GitHubActionsが用意しているcheckoutの仕組みで資材を取得する
         uses: actions/checkout@v4
         with:
@@ -100,4 +96,4 @@ jobs:
           git push origin HEAD:auto-update-child
 
           # 子プロジェクト(Gitサブモジュール)更新のプルリクを作成する
-          gh pr create --title "Update child submodule" --body "Automated update from child repo" --base develop
+          gh pr create --head auto-update-child --title "Update child submodule" --body "Automated update from child repo" --base develop

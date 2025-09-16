@@ -76,11 +76,11 @@ jobs:
         # gh(GitHub CLI)コマンドを実行する
         run: |
 
-          # トークンを指定したURL
-          git remote set-url origin https://x-access-token:${{ secrets.PARENT_REPO_TOKEN }}@github.com/ORG_NAME/PARENT_REPO.git
+          # トークンを指定したURLに切り替え、pushができるようにする
+          git remote set-url origin https://x-access-token:${{ secrets.PARENT_REPO_TOKEN }}@github.com/${{ env.GIT_NAME }}/${{ env.PARENT_PROJECT }}.git
 
           # GitHubリポジトリから資材をクローンする
-          git clone https://github.com/${{ env.GIT_NAME }}/${{ env.PARENT_PROJECT }}
+          git clone https://x-access-token:${{ secrets.PARENT_REPO_TOKEN }}@github.com/${{ env.GIT_NAME }}/${{ env.PARENT_PROJECT }}.git
 
           # クローンした資材のディレクトリに移動する
           cd ${{ env.PARENT_PROJECT }}

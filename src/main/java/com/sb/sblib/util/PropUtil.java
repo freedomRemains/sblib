@@ -12,4 +12,5 @@ import lombok.Data;
 @ConfigurationProperties(prefix = "prop")
 public class PropUtil {
     private Map<String, String> s3;
+    private Map<String, String> sftp;
 }

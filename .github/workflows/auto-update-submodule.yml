@@ -1,0 +1,99 @@
+# 親プロジェクト更新のためのGitサブモジュール(子プロジェクト側)の設定(nameは表題やコメントのようなもので、必須ではない)
+name: Update Parent Submodule
+
+# 環境設定
+env:
+
+  # プロジェクト名
+  GIT_NAME: "freedomRemains"
+  GIT_MAIL: "freedom17202103@gmail.com"
+  PARENT_PROJECT: "sbwap"
+  CHILD_PROJECT: "sblib"
+
+# 次のタイミングで起動する
+on:
+
+  # Gitサブモジュール(子プロジェクト)側のdevelopブランチへのpush時
+  push:
+    branches:
+      - develop
+
+# 親プロジェクトに対してプルリクを出すためのパーミッション設定を記述する
+# 事前にトークン発行しておき、そのときに権限設定を行う必要がある。
+# 「secrets」はGitHubリポジトリの「Settings」→「Secrets and variables」→「Actions」から設定できる
+# トークン発行は、次のサイトから可能。
+#   https://github.com/settings/tokens
+#   (1)　トークンの種類は「Fine-grained token」を選択する。
+#   (2)　トークンの設定項目は、次の通りとする。
+#     A.　名前は任意に付与する。(gh-actions-submodule-sync、など)
+#     B.　有効期限(90日～1年)
+#     C.　対象リポジトリは、親リポジトリを選択する
+#     D.　権限設定は「Contents: Read and write」「Pull requests: Read and write」を追加。
+# トークン発行後は子プロジェクト側のsecretsに登録する。
+#    (1)　「Settings」→「Secrets and variables」→「Actions」を選択。
+#    (2)　「New repository secret」を選択。
+#    (3)　次のように入力する。
+#      Name : PARENT_REPO_TOKEN
+#      Value : 発行済みの親プロジェクトのトークン
+permissions:
+  contents: write
+  pull-requests: write
+
+# ジョブ(ワークフロー内で実行する作業のまとまり)の定義
+jobs:
+
+  # 親プロジェクト更新設定(update-parentはjobs配下のジョブ名に該当する、任意の文字列としてよい)
+  update-parent:
+
+    # 当該ジョブの実行環境はUbuntuの最新イメージ上とする
+    runs-on: ubuntu-latest
+
+    # ジョブ内ステップの定義
+    steps:
+
+      # ソースコードを取得する(nameはステップ名)
+      - name: Checkout child repo
+
+        # GitHubActionsが用意しているcheckoutの仕組みで資材を取得する
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PARENT_REPO_TOKEN }}
+          submodules: true
+
+      # gh(GitHub CLI)を使用し、Gitのコンフィグ設定を行う(これはcommi&push、プルリク作成できるユーザを指定する)
+      - name: Configure Git
+        run: |
+          git config --global user.name ${{ env.GIT_NAME }}
+          git config --global user.email ${{ env.GIT_MAIL }}
+
+     # Gitサブモジュール(子プロジェクト)をクローンし、更新があれば親プロジェクトにプルリクを発行する
+      - name: Clone parent repo and update submodule
+
+        # 親プロジェクトのトークンをGitHubActionsのsecretから取得する(「GH_TOKEN」はプルリク作成時にghコマンドで利用される変数)
+        env:
+          GH_TOKEN: ${{ secrets.PARENT_REPO_TOKEN }}
+
+        # gh(GitHub CLI)コマンドを実行する
+        run: |
+
+          # GitHubリポジトリから資材をクローンする
+          git clone https://x-access-token:${{ secrets.PARENT_REPO_TOKEN }}@github.com/${{ env.GIT_NAME }}/${{ env.PARENT_PROJECT }}.git
+
+          # クローンした資材のディレクトリに移動する
+          cd ${{ env.PARENT_PROJECT }}
+
+          # Gitサブモジュール(リモート側、子プロジェクト)のアップデートを行う
+          git submodule init
+          git submodule update --remote ${{ env.CHILD_PROJECT }}
+
+          # 更新資材をステージングにアップする
+          git add ${{ env.CHILD_PROJECT }}
+
+          # ステージされた更新資材をコミットする
+          git commit -m "Auto-update child submodule"
+
+          # 子プロジェクト更新をpushする
+          git push origin HEAD:auto-update-child
+
+          # 子プロジェクト(Gitサブモジュール)更新のプルリクを作成する
+          gh pr create --head auto-update-child --title "Update child submodule" --body "Automated update from child repo" --base develop

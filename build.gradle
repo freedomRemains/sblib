@@ -115,7 +115,7 @@ dependencies {
 	// DBUnitを使用するための設定
 	testImplementation 'org.dbunit:dbunit:2.7.3'
 	testImplementation 'com.github.springtestdbunit:spring-test-dbunit:1.3.0'
-	testImplementation 'org.dbunit:dbunit-xls:1.0.4' // xlsデータセット読み込み用
+
 	// SFTPを使用するための設定
 	implementation 'com.hierynomus:sshj:0.38.0'
 }

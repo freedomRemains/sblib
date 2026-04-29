@@ -2,6 +2,7 @@ package com.sb.sblib.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -67,6 +69,27 @@ public class AwsS3Util {
                 .key(s3FilePath)
                 .build();
         s3Client.putObject(request, localFile.toPath());
+    }
+
+    /**
+     * S3にファイルをアップロードする。
+     * 
+     * @param s3Path アップロード先のファイルパス
+     * @param inputStream アップロードするファイルのInputStream
+     * @param size アップロードするファイルのサイズ
+     * @param contentType アップロードするファイルのContent-Type
+     */
+    public void upload(String s3Path, InputStream inputStream, long size, String contentType) {
+
+        // PutObjectRequestを作成
+        PutObjectRequest req = PutObjectRequest.builder()
+                .bucket(prop.getS3().get("bucket"))
+                .key(s3Path)
+                .contentType(contentType)
+                .build();
+
+        // AWS S3にファイルをアップロードする
+        s3Client.putObject(req, RequestBody.fromInputStream(inputStream, size));
     }
 
     /**

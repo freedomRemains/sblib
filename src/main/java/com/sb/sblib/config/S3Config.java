@@ -24,16 +24,22 @@ public class S3Config {
 
         // S3アクセスのためのクレデンシャル情報を生成する
         AwsBasicCredentials credentials = AwsBasicCredentials.create(
-                propUtil.getS3().get("accessKey"),
-                propUtil.getS3().get("secretKey")
+                propUtil.getS3().get("accessKey"), // プロパティ読み込みだが、実際にはAWS Secrets Managerからの取得となる
+                propUtil.getS3().get("secretKey") // プロパティ読み込みだが、実際にはAWS Secrets Managerからの取得となる
         );
 
-        // S3クライアントを生成する
+        // S3クライアントを生成する(これはMinio向けコード)
         return S3Client.builder()
                 .endpointOverride(URI.create(propUtil.getS3().get("endpoint")))
                 .region(Region.of(propUtil.getS3().get("region")))
                 .credentialsProvider(StaticCredentialsProvider.create(credentials))
                 .serviceConfiguration(config -> config.pathStyleAccessEnabled(true))
                 .build();
+
+        // // S3クライアントを生成する(これはAWS S3向けコード)
+        // return S3Client.builder()
+        //         .region(Region.of(propUtil.getS3().get("region")))
+        //         .credentialsProvider(StaticCredentialsProvider.create(credentials))
+        //         .build();
     }
 }
